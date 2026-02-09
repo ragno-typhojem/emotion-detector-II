@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎨 Duygu Dedektifi</title>
+  <title>🎨 Duygu Dedektifi - Final Fix</title>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.12/dist/face-api.min.js"></script>
@@ -41,7 +41,7 @@
     .video-wrapper { position: relative; border-radius: 25px; overflow: hidden; border: 5px solid white; box-shadow: 0 10px 40px rgba(0,0,0,0.4); background: #000; height: 100%; display: flex; align-items: center; justify-content: center; }
     
     /* Responsive Video Fix */
-    #vid { width: 100%; height: 100%; object-fit: fill; } /* Koordinatların oturması için fill yaptık */
+    #vid { width: 100%; height: 100%; object-fit: fill; }
     #cv { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 
     .popup { position: absolute; top: 15px; left: 50%; transform: translateX(-50%) scale(0); background: linear-gradient(135deg, #FFD93D 0%, #FFA500 100%); color: white; padding: 12px 25px; border-radius: 30px; font-size: 1.2rem; font-weight: 700; border: 4px solid white; box-shadow: 0 8px 25px rgba(0,0,0,0.3); transition: transform 0.4s; z-index: 10; }
@@ -426,7 +426,6 @@
     async function startCam() {
       const vid = $('vid');
       try {
-        // Çözünürlüğü mobile uygun hale getirelim
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { facingMode: 'user' }
         });
@@ -444,7 +443,6 @@
       }
     }
 
-    // --- KRİTİK DÜZELTME BURADA ---
     async function detect() {
       if (!running) return;
       const vid = $('vid'), cv = $('cv'), ctx = cv.getContext('2d');
@@ -544,11 +542,9 @@
           const preds = await objModel.detect(vid);
           preds.forEach(p => {
             // NESNE KOORDİNATLARINI MANUEL EŞİTLEME
-            // Video çözünürlüğü ile ekran boyutu arasındaki oranı bul
             const scaleX = vid.clientWidth / vid.videoWidth;
             const scaleY = vid.clientHeight / vid.videoHeight;
 
-            // Kutuyu orana göre yeniden hesapla
             const x = p.bbox[0] * scaleX;
             const y = p.bbox[1] * scaleY;
             const w = p.bbox[2] * scaleX;
@@ -580,6 +576,26 @@
 
       updateList(dets);
       if (running) requestAnimationFrame(detect);
+    }
+
+    function start() {
+      running = true;
+      $('goBtn').disabled = true;
+      $('stopBtn').disabled = false;
+      prevObj = ''; curEmo = 'neutral';
+      tObj = tEmo = tMsg = 0;
+      typeMessage('Kameraya bak ve yüz ifadeni göster! 😊');
+      detect();
+    }
+
+    function stop() {
+      running = false;
+      $('goBtn').disabled = false;
+      $('stopBtn').disabled = true;
+      const cv = $('cv');
+      const ctx = cv.getContext('2d');
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      typeMessage('Durduruldu. Tekrar başlatmak için butona tıkla! 🚀');
     }
 
     $('goBtn').onclick = start;
