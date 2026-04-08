@@ -12,7 +12,7 @@
   --bg2:     #c4b5fd;
   --bg3:     #bfdbfe;
   --white:   #ffffff;
-  --card-bg: rgba(255,255,255,0.92);
+  --card-bg: rgba(255,255,255,0.93);
   --shadow:  0 8px 32px rgba(120,60,180,0.18);
   --radius:  22px;
   --font:    'Nunito', sans-serif;
@@ -121,27 +121,28 @@ html, body {
   pointer-events: none; z-index: 500; overflow: hidden;
 }
 .fly-emoji {
-  position: absolute; font-size: 50px;
-  animation: flyUp 3.5s ease-out forwards;
+  position: absolute; font-size: 48px;
+  animation: flyUp 3.2s ease-out forwards;
 }
 @keyframes flyUp {
   0%   { transform: translateY(100vh) scale(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(-200px) scale(1.4) rotate(360deg); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateY(-180px) scale(1.3) rotate(360deg); opacity: 0; }
 }
 .confetti-bit {
-  position: absolute; width: 12px; height: 12px; top: -20px;
-  animation: confFall 4s ease-out forwards;
+  position: absolute; width: 11px; height: 11px; top: -20px;
+  animation: confFall 3.8s ease-out forwards;
 }
 @keyframes confFall {
   to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
 }
 .starburst {
-  position: absolute; font-size: 30px;
-  animation: starPop 1.6s ease-out forwards;
+  position: absolute; font-size: 28px;
+  animation: starPop 1.5s ease-out forwards;
 }
 @keyframes starPop {
   0%   { transform: scale(0) rotate(0deg); opacity: 1; }
-  50%  { transform: scale(2) rotate(180deg); opacity: 1; }
+  45%  { transform: scale(2.2) rotate(180deg); opacity: 1; }
   100% { transform: scale(0) rotate(360deg); opacity: 0; }
 }
 
@@ -162,7 +163,7 @@ html, body {
   position: relative; z-index: 1;
   height: 100vh;
   display: flex; flex-direction: column;
-  padding: 10px 14px 10px 14px;
+  padding: 10px 14px;
   max-width: 1700px; margin: 0 auto;
 }
 
@@ -205,14 +206,18 @@ html, body {
   background: #111;
   height: 100%;
 }
+
+/* CRITICAL FIX: object-fit fill so canvas coords align with video source coords */
 #vid {
   width: 100%; height: 100%;
-  object-fit: cover; display: block;
+  object-fit: fill; display: block;
 }
 #cv {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   pointer-events: none;
+  /* canvas element dims are set by JS to match videoWidth/videoHeight;
+     CSS stretches it to fill the same space as the video */
 }
 
 /* Camera badges */
@@ -224,6 +229,7 @@ html, body {
   padding: 6px 12px; border-radius: 30px;
   display: flex; align-items: center; gap: 6px;
   border: 1.5px solid rgba(255,255,255,0.25);
+  transition: background 0.3s;
 }
 .cam-badge--tl { top: 12px; left: 12px; }
 .cam-badge--tr { top: 12px; right: 12px; }
@@ -232,10 +238,10 @@ html, body {
   background: #34d399;
   animation: pulseDot 1.5s ease-in-out infinite;
 }
-.pulse-dot.red { background: #f87171; }
+.pulse-dot.red { background: #f87171; animation: none; }
 @keyframes pulseDot {
   0%,100% { transform: scale(1); opacity: 1; }
-  50%      { transform: scale(1.5); opacity: 0.6; }
+  50%      { transform: scale(1.6); opacity: 0.5; }
 }
 
 /* Object popup */
@@ -247,7 +253,7 @@ html, body {
   border-radius: 30px; font-size: 1.1rem; font-weight: 800;
   border: 3px solid white;
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-  transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  transition: transform 0.38s cubic-bezier(0.34,1.56,0.64,1);
   z-index: 10; white-space: nowrap;
 }
 .obj-popup.show {
@@ -282,10 +288,10 @@ html, body {
   padding: 14px 16px;
   box-shadow: var(--shadow);
   flex-shrink: 0;
-  border: 2px solid rgba(255,255,255,0.9);
+  border: 2px solid rgba(255,255,255,0.95);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(120,60,180,0.25); }
+.card:hover { transform: translateY(-2px); box-shadow: 0 14px 44px rgba(120,60,180,0.22); }
 
 .card-head {
   font-size: 1rem; font-weight: 800;
@@ -303,13 +309,13 @@ html, body {
   border: none; border-radius: 50px;
   cursor: pointer; font-family: var(--font);
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  transition: all 0.25s ease;
+  transition: all 0.22s ease;
   box-shadow: 0 4px 14px rgba(0,0,0,0.18);
   border: 2.5px solid white;
 }
 .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.25); }
-.btn:active:not(:disabled) { transform: translateY(1px); }
-.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+.btn:disabled { opacity: 0.42; cursor: not-allowed; transform: none !important; }
 .btn-icon { font-size: 1.2rem; }
 
 .btn--start { background: linear-gradient(135deg, #34d399, #059669); color: white; }
@@ -344,7 +350,6 @@ html, body {
 }
 
 /* Emotion card */
-.card--emo {}
 .emo-center { text-align: center; margin-bottom: 8px; }
 .emo-ring {
   display: inline-flex; align-items: center; justify-content: center;
@@ -353,14 +358,14 @@ html, body {
   border: 3px solid var(--purple);
   box-shadow: 0 4px 16px rgba(168,85,247,0.25);
   margin-bottom: 6px;
-  transition: border-color 0.4s, box-shadow 0.4s;
+  transition: border-color 0.35s, box-shadow 0.35s;
 }
 .emo-ring.pop {
-  animation: ringPop 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  animation: ringPop 0.55s cubic-bezier(0.34,1.56,0.64,1);
 }
 @keyframes ringPop {
   0%   { transform: scale(1); }
-  40%  { transform: scale(1.18); }
+  40%  { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
 .emo-big {
@@ -371,15 +376,15 @@ html, body {
 }
 @keyframes emoBob {
   0%,100% { transform: translateY(0) rotate(-4deg); }
-  50%      { transform: translateY(-5px) rotate(4deg); }
+  50%      { transform: translateY(-6px) rotate(4deg); }
 }
 .emo-big.celebrate {
-  animation: emoCelebrate 0.7s cubic-bezier(0.34,1.56,0.64,1);
+  animation: emoCelebrate 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards;
 }
 @keyframes emoCelebrate {
   0%   { transform: scale(1) rotate(0); }
-  35%  { transform: scale(1.35) rotate(-12deg); }
-  65%  { transform: scale(1.35) rotate(12deg); }
+  30%  { transform: scale(1.4) rotate(-15deg); }
+  60%  { transform: scale(1.4) rotate(15deg); }
   100% { transform: scale(1) rotate(0); }
 }
 .emo-name {
@@ -396,7 +401,7 @@ html, body {
 }
 .mini-e {
   font-size: 22px;
-  animation: miniPop 0.45s cubic-bezier(0.34,1.56,0.64,1) backwards;
+  animation: miniPop 0.4s cubic-bezier(0.34,1.56,0.64,1) backwards;
 }
 @keyframes miniPop {
   0%   { transform: scale(0) rotate(90deg); opacity: 0; }
@@ -411,11 +416,11 @@ html, body {
   flex: 1; height: 10px;
   background: #f0f0f0; border-radius: 10px;
   overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
 }
 .bar-fill {
   height: 100%; border-radius: 10px; width: 0%;
-  transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  transition: width 0.45s cubic-bezier(0.34,1.2,0.64,1);
 }
 .bar--happy    { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
 .bar--sad      { background: linear-gradient(90deg, #60a5fa, #2563eb); }
@@ -425,7 +430,6 @@ html, body {
 .bar-num { width: 36px; font-size: 0.78rem; font-weight: 800; color: #6b7280; text-align: right; }
 
 /* Objects card */
-.card--obj {}
 .obj-list { display: flex; flex-direction: column; gap: 7px; max-height: 170px; overflow-y: auto; }
 .obj-list::-webkit-scrollbar { width: 5px; }
 .obj-list::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.3); border-radius: 10px; }
@@ -436,8 +440,8 @@ html, body {
   background: linear-gradient(135deg, #f0abfc, #e879f9);
   border-radius: 14px; color: white; font-weight: 700;
   font-size: 0.9rem;
-  box-shadow: 0 3px 10px rgba(232,121,249,0.35);
-  animation: slideIn 0.35s ease;
+  box-shadow: 0 3px 10px rgba(232,121,249,0.3);
+  animation: slideIn 0.3s ease;
   transition: transform 0.2s;
 }
 .obj-item:hover { transform: translateX(3px); }
@@ -447,7 +451,7 @@ html, body {
   box-shadow: none;
 }
 @keyframes slideIn {
-  from { transform: translateX(-12px); opacity: 0; }
+  from { transform: translateX(-10px); opacity: 0; }
   to   { transform: translateX(0); opacity: 1; }
 }
 .obj-icon { font-size: 1.6rem; flex-shrink: 0; }
